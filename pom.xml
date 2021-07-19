@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jlee</groupId>
+    <artifactId>Edu-Cloud</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>Edu-Cloud</name>
+    <description>微服务系统框架</description>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <java.version>1.8</java.version>
+        <edu.cloud.version>1.0-SNAPSHOT</edu.cloud.version>
+        <!--    spring-boot 2.5.x  →  spring-cloud  2020.0.x  →  spring-cloud-alibaba  2021.x  -->
+        <spring-boot.version>2.5.1</spring-boot.version>
+        <spring-cloud.version>2020.0.3</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
+        <swagger.version>3.0.0</swagger.version>
+    </properties>
+
+    <!-- 依赖声明 -->
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- SpringCloud 微服务 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- SpringCloud Alibaba 微服务 -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+
+            <!-- SpringBoot 依赖配置 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Swagger 依赖配置 -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+
+            <!-- swagger模块 -->
+            <dependency>
+                <groupId>com.jlee</groupId>
+                <artifactId>edu-common-swagger</artifactId>
+                <version>${edu.cloud.version}</version>
+            </dependency>
+
+
+            <!-- 结果集和统一异常处理模块 -->
+            <dependency>
+                <groupId>com.jlee</groupId>
+                <artifactId>edu-common-web</artifactId>
+                <version>${edu.cloud.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <modules>
+        <module>edu-common</module>
+        <module>dome2</module>
+    </modules>
+
+</project>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>Edu-Cloud</artifactId>
+        <groupId>com.jlee</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <packaging>pom</packaging>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>edu-common</artifactId>
+
+    <description>通用模块配置</description>
+
+    <dependencies>
+        <!--   配置文件自动提示     -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>edu-common-swagger</module>
+        <module>edu-common-security</module>
+        <module>edu-common-web</module>
+    </modules>
+</project>
