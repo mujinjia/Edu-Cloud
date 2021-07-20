@@ -1,6 +1,5 @@
 package com.jlee.configurer;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
@@ -20,7 +19,6 @@ import java.util.List;
  *
  * @author jlee
  */
-@Configuration
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;

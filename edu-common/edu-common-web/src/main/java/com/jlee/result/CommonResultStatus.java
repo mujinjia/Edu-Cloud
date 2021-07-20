@@ -3,14 +3,12 @@ package com.jlee.result;
 import com.jlee.config.ResponseResultProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * 公共的状态值，可以通过 ResponseResultProperties 读取配置的状态值
  *
  * @author jlee
  */
-@Component
 @EnableConfigurationProperties(ResponseResultProperties.class)
 class CommonResultStatus implements ResultStatus {
 

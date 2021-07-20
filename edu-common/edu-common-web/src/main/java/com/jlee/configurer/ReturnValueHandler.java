@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -29,7 +28,6 @@ import java.util.List;
  *
  * @author jlee
  */
-@Component
 public class ReturnValueHandler extends HttpEntityMethodProcessor implements HandlerMethodReturnValueHandler {
 
     private ResponseResultProperties responseResultProperties;
