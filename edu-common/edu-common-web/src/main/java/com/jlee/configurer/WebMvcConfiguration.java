@@ -1,5 +1,6 @@
 package com.jlee.configurer;
 
+import com.jlee.config.ResponseResultProperties;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
@@ -23,16 +24,13 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;
     private final HandlerExceptionResolver handlerExceptionResolver;
+    private final ResponseResultProperties responseResultProperties;
 
-    /**
-     * 自定义的返回值处理器
-     */
-    private final ReturnValueHandler returnValueHandler;
 
-    public WebMvcConfiguration(ReturnValueHandler returnValueHandler, RequestMappingHandlerAdapter requestMappingHandlerAdapter, HandlerExceptionResolver handlerExceptionResolver) {
-        this.returnValueHandler = returnValueHandler;
+    public WebMvcConfiguration(ResponseResultProperties responseResultProperties, RequestMappingHandlerAdapter requestMappingHandlerAdapter, HandlerExceptionResolver handlerExceptionResolver) {
         this.requestMappingHandlerAdapter = requestMappingHandlerAdapter;
         this.handlerExceptionResolver = handlerExceptionResolver;
+        this.responseResultProperties = responseResultProperties;
     }
 
     @PostConstruct
@@ -40,6 +38,9 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         final List<HandlerMethodReturnValueHandler> newHandlers = new LinkedList<>();
         final List<HandlerMethodReturnValueHandler> originalHandlers = requestMappingHandlerAdapter.getReturnValueHandlers();
 
+
+        // 通过手动new对象的方式传递系统配置的转换器，因为这些转换器没有注册到spring容器中
+        ReturnValueHandler returnValueHandler = new ReturnValueHandler(this.responseResultProperties, getMessageConverters());
 
         // 将自定义的returnValueHandler 添加到了正常结果返回的Handel处理集合中，
         if (null != originalHandlers) {

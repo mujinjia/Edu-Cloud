@@ -3,15 +3,17 @@ package com.jlee.configurer;
 import com.jlee.config.ResponseResultProperties;
 import com.jlee.exception.ApiErrorViewModel;
 import com.jlee.result.ResponseResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -35,25 +37,39 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
     /**
      * 要求构造函数需要一个和父类保持一致的，没有无参构造函数
      */
-    public ReturnValueHandler(List<HttpMessageConverter<?>> converters) {
+    public ReturnValueHandler(ResponseResultProperties responseResultProperties, List<HttpMessageConverter<?>> converters) {
         super(converters);
-    }
-
-    @Autowired
-    public void setResponseResultProperties(ResponseResultProperties responseResultProperties) {
         this.responseResultProperties = responseResultProperties;
     }
+
+
+    public ReturnValueHandler(ResponseResultProperties responseResultProperties, List<HttpMessageConverter<?>> converters,
+                              ContentNegotiationManager manager) {
+        super(converters, manager);
+        this.responseResultProperties = responseResultProperties;
+    }
+
+    public ReturnValueHandler(ResponseResultProperties responseResultProperties, List<HttpMessageConverter<?>> converters,
+                              List<Object> requestResponseBodyAdvice) {
+        super(converters, null, requestResponseBodyAdvice);
+        this.responseResultProperties = responseResultProperties;
+    }
+
+
+    public ReturnValueHandler(ResponseResultProperties responseResultProperties, List<HttpMessageConverter<?>> converters,
+                              @Nullable ContentNegotiationManager manager, List<Object> requestResponseBodyAdvice) {
+        super(converters, manager, requestResponseBodyAdvice);
+        this.responseResultProperties = responseResultProperties;
+    }
+
 
     @Override
     public boolean supportsReturnType(MethodParameter returnType) {
         Method method = returnType.getMethod();
         // 如果拿不到返回的类型或者返回的类型已经是ResponseEntity则不处理，异常也不处理
         // 返回false的异常会交给其他Handel执行
-        if (method == null || method.getReturnType().isAssignableFrom(ResponseEntity.class)
-                || method.getReturnType().isAssignableFrom(Exception.class)) {
-            return false;
-        }
-        return true;
+        return method != null && !method.getReturnType().isAssignableFrom(ResponseEntity.class)
+                && !method.getReturnType().isAssignableFrom(Exception.class);
     }
 
     @Override
@@ -62,7 +78,7 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
             throws Exception {
 
 
-        ResponseResult<?> responseResult = null;
+        ResponseResult<?> responseResult;
 
         if (returnValue instanceof ApiErrorViewModel) {
             Assert.isInstanceOf(ApiErrorViewModel.class, returnValue);
@@ -81,7 +97,7 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
             // 对于 String会用StringHttpMessageConverter转换器进行转换，如果不特殊处理就无法转换
         }
 
-        ResponseEntity<?> responseEntity = null;
+        ResponseEntity<?> responseEntity;
 
         HttpHeaders headers = responseResult.getHeaders();
         if (headers == null) {
@@ -105,12 +121,31 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
             }
 
         } else {
-            responseEntity = new ResponseEntity<>(responseResult, headers, HttpStatus.OK);
+
+            List<String> contentTypes = headers.get(HttpHeaders.CONTENT_TYPE);
+            boolean isJson = false;
+            if (!CollectionUtils.isEmpty(contentTypes)) {
+                for (String contentType : contentTypes) {
+                    if (contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
+                        isJson = true;
+                        break;
+                    }
+                }
+            } else {
+                isJson = true;
+            }
+            // 如果响应头中被设置成非json的数据那么，就返回data
+            if (isJson) {
+                responseEntity = new ResponseEntity<>(responseResult, headers, HttpStatus.OK);
+            } else {
+                responseEntity = new ResponseEntity<>(responseResult.getData(), headers, HttpStatus.OK);
+            }
         }
 
         // 获取正在的结果集类型
+
         final HandlerMethod bodyMethod = new HandlerMethod(responseEntity, "getBody");
-        final MethodParameter returnValueType = bodyMethod.getReturnValueType(responseEntity);
+        final MethodParameter returnValueType = bodyMethod.getReturnValueType(responseEntity.getBody());
 
         // 使用父类去处理，然后返回
         super.handleReturnValue(responseEntity, returnValueType, mavContainer, webRequest);

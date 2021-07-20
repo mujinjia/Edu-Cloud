@@ -1,4 +1,0 @@
-server:
-  port: 8081
-swagger:
-  base-package:

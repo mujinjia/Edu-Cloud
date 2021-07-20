@@ -35,19 +35,25 @@ public class IndexController {
         return ResponseResult.status(DemoResultStatus.USER_REG_USER_PASSWORD_CONFIRM).build();
     }
 
+    @GetMapping("exception")
+    public ResponseResult<String> exception() {
+        throw new ApiException(DemoResultStatus.USER_REG_USER_PASSWORD_CONFIRM);
+    }
+
     @GetMapping("entityOk")
     public ResponseEntity<String> entityOk() {
         return ResponseEntity.status(HttpStatus.OK).body("ceshi");
     }
 
-    @GetMapping("exception")
-    public ResponseEntity<String> exception() {
-        throw new ApiException(DemoResultStatus.USER_REG_USER_PASSWORD_CONFIRM);
-    }
-
     @GetMapping("httpTest")
     public ResponseEntity<Void> httpTest() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+
+    @GetMapping("file")
+    public ResponseResult<byte[]> file() {
+        return ResponseResult.file("测试文件.txt", "测试文件哦");
     }
 
 }
