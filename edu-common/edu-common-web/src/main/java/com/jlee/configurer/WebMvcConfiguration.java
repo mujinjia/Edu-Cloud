@@ -125,19 +125,4 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         return -1;
     }
 
-
-//    /**
-//     * 为 converters 转换器添加上spring配置
-//     *
-//     * @param converters 转换器
-//     */
-//    @Override
-//    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-//        Jackson2ObjectMapperBuilder json = Jackson2ObjectMapperBuilder.json();
-//        json.applicationContext(this.applicationContext);
-//        json.serializationInclusion(JsonInclude.Include.NON_NULL);
-//        converters.removeIf(f -> f.getClass() == MappingJackson2HttpMessageConverter.class);
-//        converters.add(new MappingJackson2HttpMessageConverter(json.build()));
-//    }
-
 }
