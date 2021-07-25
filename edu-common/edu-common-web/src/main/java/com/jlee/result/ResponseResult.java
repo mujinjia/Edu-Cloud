@@ -1,5 +1,6 @@
 package com.jlee.result;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.internal.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class ResponseResult<T> {
     private final int code;
     private final T data;
     private final Object status;
+    @JsonIgnore
     private HttpHeaders headers;
 
 

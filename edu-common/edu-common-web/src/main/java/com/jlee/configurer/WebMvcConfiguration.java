@@ -1,36 +1,56 @@
 package com.jlee.configurer;
 
 import com.jlee.config.ResponseResultProperties;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerExceptionResolverComposite;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * 配置类，配置自定义返回值处理器
+ * 如果通过继承 WebMvcConfigurationSupport 类的方式实现，spring默认配置将会失效（即使在配置文件中加入了配置）
+ * 因为默认配置加载类WebMvcAutoConfiguration 添加了 @ConditionalOnMissingBean(WebMvcConfigurationSupport.class) 注解，而在WebMvcConfigurationSupport中没去取读取配置类，所以需要自己去读取
+ * 为了不破环使用者的配置，选择继承WebMvcConfigurer实现
  *
  * @author jlee
  */
-public class WebMvcConfiguration extends WebMvcConfigurationSupport {
+public class WebMvcConfiguration implements WebMvcConfigurer {
 
+    /**
+     * 响应结果集处理的Handler
+     */
     private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;
+    /**
+     * 异常处理的Handler
+     */
     private final HandlerExceptionResolver handlerExceptionResolver;
+    /**
+     * 设置了默认配置的消息转换器工厂
+     */
+    private final ObjectProvider<HttpMessageConverters> messageConvertersProvider;
+    /**
+     * 自定义的结果集配置类
+     */
     private final ResponseResultProperties responseResultProperties;
 
-
-    public WebMvcConfiguration(ResponseResultProperties responseResultProperties, RequestMappingHandlerAdapter requestMappingHandlerAdapter, HandlerExceptionResolver handlerExceptionResolver) {
+    public WebMvcConfiguration(ResponseResultProperties responseResultProperties, RequestMappingHandlerAdapter requestMappingHandlerAdapter, HandlerExceptionResolver handlerExceptionResolver, ObjectProvider<HttpMessageConverters> messageConvertersProvider) {
         this.requestMappingHandlerAdapter = requestMappingHandlerAdapter;
         this.handlerExceptionResolver = handlerExceptionResolver;
         this.responseResultProperties = responseResultProperties;
+        this.messageConvertersProvider = messageConvertersProvider;
     }
 
     @PostConstruct
@@ -38,9 +58,11 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         final List<HandlerMethodReturnValueHandler> newHandlers = new LinkedList<>();
         final List<HandlerMethodReturnValueHandler> originalHandlers = requestMappingHandlerAdapter.getReturnValueHandlers();
 
-
-        // 通过手动new对象的方式传递系统配置的转换器，因为这些转换器没有注册到spring容器中
-        ReturnValueHandler returnValueHandler = new ReturnValueHandler(this.responseResultProperties, getMessageConverters());
+        final List<HttpMessageConverter<?>> converters = new ArrayList<>();
+        this.messageConvertersProvider
+                .ifAvailable((customConverters) -> converters.addAll(customConverters.getConverters()));
+        // 手动new对象的方式传递系统配置的转换器
+        ReturnValueHandler returnValueHandler = new ReturnValueHandler(this.responseResultProperties, converters);
 
         // 将自定义的returnValueHandler 添加到了正常结果返回的Handel处理集合中，
         if (null != originalHandlers) {
@@ -103,5 +125,19 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         return -1;
     }
 
+
+//    /**
+//     * 为 converters 转换器添加上spring配置
+//     *
+//     * @param converters 转换器
+//     */
+//    @Override
+//    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        Jackson2ObjectMapperBuilder json = Jackson2ObjectMapperBuilder.json();
+//        json.applicationContext(this.applicationContext);
+//        json.serializationInclusion(JsonInclude.Include.NON_NULL);
+//        converters.removeIf(f -> f.getClass() == MappingJackson2HttpMessageConverter.class);
+//        converters.add(new MappingJackson2HttpMessageConverter(json.build()));
+//    }
 
 }

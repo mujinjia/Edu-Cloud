@@ -26,22 +26,18 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 包装返回值,针对有mapping注解的方法返回的json数据包装
+ * 包装返回值
  *
  * @author jlee
  */
 public class ReturnValueHandler extends HttpEntityMethodProcessor implements HandlerMethodReturnValueHandler {
 
-    private ResponseResultProperties responseResultProperties;
+    private final ResponseResultProperties responseResultProperties;
 
-    /**
-     * 要求构造函数需要一个和父类保持一致的，没有无参构造函数
-     */
     public ReturnValueHandler(ResponseResultProperties responseResultProperties, List<HttpMessageConverter<?>> converters) {
         super(converters);
         this.responseResultProperties = responseResultProperties;
     }
-
 
     public ReturnValueHandler(ResponseResultProperties responseResultProperties, List<HttpMessageConverter<?>> converters,
                               ContentNegotiationManager manager) {
@@ -55,13 +51,11 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
         this.responseResultProperties = responseResultProperties;
     }
 
-
     public ReturnValueHandler(ResponseResultProperties responseResultProperties, List<HttpMessageConverter<?>> converters,
                               @Nullable ContentNegotiationManager manager, List<Object> requestResponseBodyAdvice) {
         super(converters, manager, requestResponseBodyAdvice);
         this.responseResultProperties = responseResultProperties;
     }
-
 
     @Override
     public boolean supportsReturnType(MethodParameter returnType) {
@@ -134,16 +128,15 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
             } else {
                 isJson = true;
             }
-            // 如果响应头中被设置成非json的数据那么，就返回data
             if (isJson) {
                 responseEntity = new ResponseEntity<>(responseResult, headers, HttpStatus.OK);
             } else {
+                // 如果响应头中被设置成非json的数据那么，就返回data
                 responseEntity = new ResponseEntity<>(responseResult.getData(), headers, HttpStatus.OK);
             }
         }
 
-        // 获取正在的结果集类型
-
+        // 获取真正的结果集类型
         final HandlerMethod bodyMethod = new HandlerMethod(responseEntity, "getBody");
         final MethodParameter returnValueType = bodyMethod.getReturnValueType(responseEntity.getBody());
 

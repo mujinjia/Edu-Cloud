@@ -1,8 +1,8 @@
 server:
   port: 8080
-spring:
-  jackson:
-    default-property-inclusion: non_null
+#spring:
+#  jackson:
+#    default-property-inclusion: non_null
 #result:
 #  enabled-http-status: true
 #  message-head-title: message
