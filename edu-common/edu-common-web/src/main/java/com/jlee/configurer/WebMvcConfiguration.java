@@ -1,19 +1,25 @@
 package com.jlee.configurer;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.jlee.config.ResponseResultProperties;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
  * 配置自定义返回值处理器
  * <p>1、处理器是在 WebMvcConfigurationSupport 中才被加载，如果我们自己实现 WebMvcConfigurationSupport类可在此类提供的接口中添加自己的处理器</p>
  * <p>2、但是一般一个应用就只有一个WebMvcConfigurationSupport，如果我们自己实现了就不会去加载默认的WebMvcConfigurationSupport，作为一个jar包所以不能去实现WebMvcConfigurationSupport</p>
- * <p>3、默认的WebMvcConfigurationSupport有两个，DelegatingWebMvcConfiguration 和 WebMvcAutoConfiguration.EnableWebMvcConfiguration，如果加入@EnableWebMvc 会加载前者，如果项目中一个WebMvcConfigurationSupport都没有就会加载后者</p>
+ * <p>3、默认的 WebMvcConfigurationSupport有两个，DelegatingWebMvcConfiguration 和 WebMvcAutoConfiguration.EnableWebMvcConfiguration，如果加入@EnableWebMvc 会加载前者，如果项目中一个WebMvcConfigurationSupport都没有就会加载后者</p>
  * <p>4、默认只有在WebMvcAutoConfiguration中才会去加载配置文件，DelegatingWebMvcConfiguration没有加，用户自己写的WebMvcConfigurationSupport也可能没有加载，我们返回结果集内部使用的类型转换器HttpMessageConverter应该与用户选择一致</p>
  * <p>5、默认的两个WebMvcConfigurationSupport都会去调用其他的WebMvcConfigurer配置中的方法，但是要等所有的WebMvcConfigurer创建才会加载他们,所以如果某个WebMvcConfigurer因为在构建时依赖了WebMvcConfigurationSupport中才会放入Spring容器中的Bean，就会导致所有的WebMvcConfigurer很晚才会注入到WebMvcConfigurationSupport中，造成一些方法没有被调用，出现bug</p>
  * <p>所以为了不破环用户的选择，避免一些bug，不应该实现WebMvcConfigurationSupport来添加配置文件</p>
@@ -70,6 +76,21 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         // WebMvcConfigurer 中没有提供 获取 messageConverters 的方法，所以这里保存一份，方便后续使用
+
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper objectMapper = converter.getObjectMapper();
+        // 生成JSON时,将所有Long转换成String
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        objectMapper.registerModule(simpleModule);
+        // 时间格式化
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        // 设置格式化内容
+        converter.setObjectMapper(objectMapper);
+        converters.add(0, converter);
+
         this.messageConverters = converters;
     }
 
