@@ -22,6 +22,8 @@
         <spring-cloud.version>2020.0.3</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
         <swagger.version>3.0.0</swagger.version>
+        <mybatis-plus.version>3.4.3.1</mybatis-plus.version>
+        <druid.version>1.2.6</druid.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -56,12 +58,44 @@
                 <scope>import</scope>
             </dependency>
 
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter-test</artifactId>
+                <version>${mybatis-plus.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+                <scope>compile</scope>
+            </dependency>
+
+
             <!-- Swagger 依赖配置 -->
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-boot-starter</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
+
+
+            <!-- 公共的常量配置模块 -->
+            <dependency>
+                <groupId>com.jlee</groupId>
+                <artifactId>edu-common-config</artifactId>
+                <version>${edu.cloud.version}</version>
+            </dependency>
+
 
             <!-- swagger模块 -->
             <dependency>
@@ -77,11 +111,22 @@
                 <artifactId>edu-common-web</artifactId>
                 <version>${edu.cloud.version}</version>
             </dependency>
+
+            <!-- 数据库配置模块 -->
+            <dependency>
+                <groupId>com.jlee</groupId>
+                <artifactId>edu-common-data</artifactId>
+                <version>${edu.cloud.version}</version>
+            </dependency>
+
+
         </dependencies>
     </dependencyManagement>
     <modules>
         <module>edu-common</module>
         <module>demo</module>
     </modules>
+    <dependencies>
+    </dependencies>
 
 </project>

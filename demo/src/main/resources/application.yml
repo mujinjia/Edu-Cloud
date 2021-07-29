@@ -10,6 +10,20 @@ spring:
       date-time: yyyy-MM-dd HH:mm:ss
       date: yyyy-MM-dd
       time: HH:mm:ss
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/dome?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
+      username: root
+      password: 1234
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: is_deleted
+  configuration:
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+  type-enums-package: com.jlee.demo.domain
 #result:
 #  enabled-http-status: true
 #  message-head-title: message
+

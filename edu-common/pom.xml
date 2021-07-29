@@ -27,5 +27,7 @@
         <module>edu-common-swagger</module>
         <module>edu-common-security</module>
         <module>edu-common-web</module>
+        <module>edu-common-data</module>
+        <module>edu-common-config</module>
     </modules>
 </project>

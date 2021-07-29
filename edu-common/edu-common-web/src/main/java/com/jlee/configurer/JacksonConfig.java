@@ -10,7 +10,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.jlee.config.MyJacksonProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -23,32 +22,37 @@ import java.time.format.DateTimeFormatter;
 /**
  * Jackson 序列化和反序列化时日期格式配置
  *
- * @author lijia
+ * @author jlee
  */
 @Configuration
 @ConditionalOnClass(ObjectMapper.class)
-@EnableConfigurationProperties(MyJacksonProperties.class)
 public class JacksonConfig {
 
     @Bean
     @ConditionalOnClass(Jackson2ObjectMapperBuilder.class)
     public Jackson2ObjectMapperBuilderCustomizer customizeJackson(MyJacksonProperties jacksonProperties) {
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(jacksonProperties.getLocalDateTimeFormat());
+        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(jacksonProperties.getLocalDateFormat());
+        final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(jacksonProperties.getLocalTimeFormat());
+
         return builder -> {
+            // DateTimeFormatter  是一个线程安全的类，Serializer和Deserializer可以共用一个
+
             // 序列化
             builder.serializerByType(LocalDateTime.class,
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(jacksonProperties.getLocalDateTimeFormat())));
+                    new LocalDateTimeSerializer(dateTimeFormatter));
             builder.serializerByType(LocalDate.class,
-                    new LocalDateSerializer(DateTimeFormatter.ofPattern(jacksonProperties.getLocalDateFormat())));
+                    new LocalDateSerializer(dateFormatter));
             builder.serializerByType(LocalTime.class,
-                    new LocalTimeSerializer(DateTimeFormatter.ofPattern(jacksonProperties.getLocalTimeFormat())));
+                    new LocalTimeSerializer(timeFormatter));
 
             // 反序列化
             builder.deserializerByType(LocalDateTime.class,
-                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(jacksonProperties.getLocalDateTimeFormat())));
+                    new LocalDateTimeDeserializer(dateTimeFormatter));
             builder.deserializerByType(LocalDate.class,
-                    new LocalDateDeserializer(DateTimeFormatter.ofPattern(jacksonProperties.getLocalDateFormat())));
+                    new LocalDateDeserializer(dateFormatter));
             builder.deserializerByType(LocalTime.class,
-                    new LocalTimeDeserializer(DateTimeFormatter.ofPattern(jacksonProperties.getLocalTimeFormat())));
+                    new LocalTimeDeserializer(timeFormatter));
         };
     }
 }

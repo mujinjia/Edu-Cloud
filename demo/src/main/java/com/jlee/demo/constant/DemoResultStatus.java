@@ -3,7 +3,7 @@ package com.jlee.demo.constant;
 import com.jlee.result.ResultStatus;
 
 /**
- * @author lijia
+ * @author jlee
  * @since 2021/7/15
  */
 public enum DemoResultStatus implements ResultStatus {

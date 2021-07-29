@@ -9,28 +9,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>edu-common-web</artifactId>
+    <artifactId>edu-common-config</artifactId>
+
+    <description>公共常量配置</description>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
     <dependencies>
-        <!-- Spring Context Support -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-
-        <!-- SpringBoot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <!-- 公共的常量配置模块 -->
-        <dependency>
-            <groupId>com.jlee</groupId>
-            <artifactId>edu-common-config</artifactId>
+            <artifactId>spring-boot</artifactId>
         </dependency>
     </dependencies>
 

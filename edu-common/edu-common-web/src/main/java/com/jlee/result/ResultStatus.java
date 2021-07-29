@@ -3,7 +3,7 @@ package com.jlee.result;
 /**
  * 结果集状态接口，各业务自定义状态枚举类实现这个接口
  *
- * @author lijia
+ * @author jlee
  * @since 2021/7/15
  */
 public interface ResultStatus {

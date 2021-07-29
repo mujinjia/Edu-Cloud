@@ -39,6 +39,12 @@
             <artifactId>edu-common-web</artifactId>
         </dependency>
 
+        <!-- 数据库配置模块 -->
+        <dependency>
+            <groupId>com.jlee</groupId>
+            <artifactId>edu-common-data</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
