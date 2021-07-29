@@ -122,7 +122,7 @@ public class OldWebMvcConfiguration {
                 return i;
             }
         }
-        return -1;
+        return 0;
     }
 
 }

@@ -2,12 +2,14 @@ server:
   port: 8080
 spring:
   jackson:
-    default-property-inclusion: non_null
+    default-property-inclusion: NON_EMPTY
     date-format: yyyy-MM-dd HH:mm:ss   # 只对Date类型有效果，因为该配置是用来创建 SimpleDateFormat 的
   mvc:
     # 非json请求反序化日期时的格式
     format:
       date-time: yyyy-MM-dd HH:mm:ss
+      date: yyyy-MM-dd
+      time: HH:mm:ss
 #result:
 #  enabled-http-status: true
 #  message-head-title: message
