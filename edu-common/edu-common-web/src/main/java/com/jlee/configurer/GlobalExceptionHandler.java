@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
      *
      * @param code    状态值
      * @param message 错误信息
-     * @return
+     * @return ApiErrorViewModel
      */
     public ApiErrorViewModel createErrorViewModel(int code, String message) {
         return ApiErrorViewModel.builder()
@@ -71,58 +71,4 @@ public class GlobalExceptionHandler {
         }
         log.error("请求的地址是：{},ApiException出现异常：{}", request.getRequestURL(), message);
     }
-
-    /**
-     * 基础异常
-     */
-//    @ExceptionHandler(BaseException.class)
-//    public AjaxResult baseException(BaseException e)
-//    {
-//        return AjaxResult.error(e.getDefaultMessage());
-//    }
-
-    /**
-     * 业务异常
-     */
-//    @ExceptionHandler(CustomException.class)
-//    public AjaxResult businessException(CustomException e)
-//    {
-//        if (StringUtils.isNull(e.getCode()))
-//        {
-//            return AjaxResult.error(e.getMessage());
-//        }
-//        return AjaxResult.error(e.getCode(), e.getMessage());
-//    }
-
-
-    /**
-     * 自定义验证异常
-     */
-//    @ExceptionHandler(BindException.class)
-//    public AjaxResult validatedBindException(BindException e)
-//    {
-//        log.error(e.getMessage(), e);
-//        String message = e.getAllErrors().get(0).getDefaultMessage();
-//        return AjaxResult.error(message);
-//    }
-
-    /**
-     * 自定义验证异常
-     */
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public Object validExceptionHandler(MethodArgumentNotValidException e)
-//    {
-//        log.error(e.getMessage(), e);
-//        String message = e.getBindingResult().getFieldError().getDefaultMessage();
-//        return AjaxResult.error(message);
-//    }
-
-    /**
-     * 权限异常
-     */
-//    @ExceptionHandler(PreAuthorizeException.class)
-//    public AjaxResult preAuthorizeException(PreAuthorizeException e)
-//    {
-//        return AjaxResult.error("没有权限，请联系管理员授权");
-//    }
 }
