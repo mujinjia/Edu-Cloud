@@ -1,6 +1,6 @@
 package com.jlee.result;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.internal.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class ResponseResult<T> {
     private final int code;
     private final T data;
     private final Object status;
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //仅做反序列化操作
     private HttpHeaders headers;
 
 
@@ -166,7 +166,7 @@ public class ResponseResult<T> {
 
 
     public static <T> ResponseResult<T> of(int status, String message, T data) {
-        return new ResponseResult<T>(status, message, data, null);
+        return new ResponseResult<>(status, message, data, null);
     }
 
 
@@ -227,10 +227,10 @@ public class ResponseResult<T> {
      * 获取自定义业务枚举，如果当前状态不在传入的枚举类型中会抛异常
      *
      * @param enumType 要获取的枚举类型对应class
-     * @param <T>      要获取的枚举类型
+     * @param <E>      要获取的枚举类型
      * @return 枚举状态
      */
-    public <T extends Enum<T>> T getStatusCode(@NonNull Class<T> enumType) {
+    public <E extends Enum<E>> E getStatusCode(@NonNull Class<E> enumType) {
         if (this.status instanceof ResultStatus) {
             return Enum.valueOf(enumType, ((ResultStatus) this.status).name());
         } else if (this.status instanceof HttpStatus) {
