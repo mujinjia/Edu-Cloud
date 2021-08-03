@@ -1,5 +1,7 @@
 package com.jlee.demo.controller;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.jlee.demo.constant.DemoResultStatus;
 import com.jlee.exception.ApiException;
 import com.jlee.result.ResponseResult;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
  */
 @RestController("test")
 public class IndexController {
+
 
     @PostMapping("/index")
     public ResponseResult<LocalDateTime> index(@RequestBody TestTime testTime) {
@@ -62,9 +65,59 @@ public class IndexController {
     }
 
 
+    public enum Gender {
+        /**
+         * 性别男
+         */
+        MALE(10, "男"),
+        /**
+         * 性别女
+         */
+        FEMALE(20, "女");
+
+        private final Integer code;
+        @JsonValue
+        private final String description;
+
+        Gender(Integer code, String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        @JsonCreator
+        public static Gender create(String value) {
+            try {
+                return Gender.valueOf(value);
+            } catch (IllegalArgumentException e) {
+                for (Gender gender : Gender.values()) {
+                    try {
+                        if (gender.code.equals(Integer.parseInt(value))) {
+                            return gender;
+                        }
+                    } catch (NumberFormatException n) {
+                        if (gender.description.equals(value)) {
+                            return gender;
+                        }
+                    }
+                }
+                throw new IllegalArgumentException("没有元素匹配 " + value);
+            }
+
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
+
     @Data
     public static class TestTime {
         private LocalDateTime localDateTime;
+        private Gender gender;
     }
 
 }
