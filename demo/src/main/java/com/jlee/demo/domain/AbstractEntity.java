@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.jlee.data.AbstractDataEntity;
 
 /**
- * @author lijia
+ * @author jlee
  * @since 2021/7/30
  */
 public class AbstractEntity extends AbstractDataEntity {

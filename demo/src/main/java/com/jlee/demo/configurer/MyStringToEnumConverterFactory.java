@@ -1,6 +1,7 @@
 package com.jlee.demo.configurer;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.core.convert.converter.Converter;
@@ -15,16 +16,20 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * springMVC 枚举类的转换器
+ * 如果枚举类中有工厂方法(静态方法)被标记为@{@link JsonValue },则调用该方法转为枚举对象
+ */
 @SuppressWarnings("all")
-final class MyIntegerToEnumConverterFactory implements ConverterFactory<Integer, Enum<?>> {
+public class MyStringToEnumConverterFactory implements ConverterFactory<String, Enum<?>> {
 
     private final ConcurrentMap<Class<? extends Enum<?>>, EnumMvcConverterHolder> holderMapper = new ConcurrentHashMap<>();
 
 
     @Override
-    public <T extends Enum<?>> Converter<Integer, T> getConverter(Class<T> targetType) {
+    public <T extends Enum<?>> Converter<String, T> getConverter(Class<T> targetType) {
         EnumMvcConverterHolder holder = holderMapper.computeIfAbsent(targetType, EnumMvcConverterHolder::createHolder);
-        return (Converter<Integer, T>) holder.converter;
+        return (Converter<String, T>) holder.converter;
     }
 
 
@@ -46,7 +51,7 @@ final class MyIntegerToEnumConverterFactory implements ConverterFactory<Integer,
 
     }
 
-    public static class EnumMvcConverter<T extends Enum<T>> implements Converter<Integer, T> {
+    public static class EnumMvcConverter<T extends Enum<T>> implements Converter<String, T> {
 
         private final Method method;
         private final Class<?> enumType;
@@ -60,21 +65,33 @@ final class MyIntegerToEnumConverterFactory implements ConverterFactory<Integer,
         }
 
         @Override
-        public T convert(Integer source) {
+        public T convert(String source) {
+            if (source.isEmpty()) {
+                // reset the enum value to null.
+                return null;
+            }
             try {
                 if (method == null) {
                     //  没有加注解
-                    //  从 int类型中取
-                    return ((T[]) this.enumType.getEnumConstants())[source];
-
+                    Enum[] enumValues = (Enum[]) this.enumType.getEnumConstants();
+                    if (enumValues != null) {
+                        for (Enum enumValue : enumValues) {
+                            if (enumValue.name().equals(source)) {
+                                return (T) enumValue;
+                            }
+                        }
+                        // source 值与 name不匹配时尝试 从 int类型中取
+                        return ((T[]) enumValues)[Integer.valueOf(source)];
+                    }
                 }
                 // 有加注解直接走注解方法
-                return (T) method.invoke(null, String.valueOf(source));
+                return (T) method.invoke(null, source);
             } catch (Exception e) {
                 throw new IllegalArgumentException(e);
             }
         }
 
     }
+
 
 }

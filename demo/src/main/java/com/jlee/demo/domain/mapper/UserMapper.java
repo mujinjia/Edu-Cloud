@@ -5,7 +5,7 @@ import com.jlee.demo.domain.User;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author lijia
+ * @author jlee
  * @since 2021/8/1
  */
 @Repository
