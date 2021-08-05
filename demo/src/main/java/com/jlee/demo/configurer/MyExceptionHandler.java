@@ -6,6 +6,7 @@ import com.jlee.exception.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 
 @RestControllerAdvice
-public class ExceptionHandler extends GlobalExceptionHandler {
+public class MyExceptionHandler extends GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 
@@ -24,8 +25,8 @@ public class ExceptionHandler extends GlobalExceptionHandler {
      * Api异常
      */
     @Override
-    @org.springframework.web.bind.annotation.ExceptionHandler({ApiException.class})
-    public ApiErrorViewModel handleException(ApiException apiException, HttpServletRequest request) {
+    @ExceptionHandler({ApiException.class})
+    public ApiErrorViewModel handleApiException(ApiException apiException, HttpServletRequest request) {
         final ApiErrorViewModel errorViewModel = createErrorViewModel(apiException.getStatus(), apiException.getMessage());
         doLogOut(apiException, errorViewModel, request);
         return errorViewModel;

@@ -1,18 +1,21 @@
 package com.jlee.demo.controller;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.jlee.demo.constant.DemoResultStatus;
 import com.jlee.exception.ApiException;
 import com.jlee.result.ResponseResult;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author jlee
@@ -23,8 +26,10 @@ public class IndexController {
 
 
     @PostMapping("/index")
-    public ResponseResult<LocalDateTime> index(TestTime testTime) {
-        return ResponseResult.ok(LocalDateTime.now());
+    public ResponseResult<TestRest> index(@RequestBody TestTime testTime) {
+        final TestRest testRest = new TestRest();
+        testRest.setLocalDateTime(new Date());
+        return ResponseResult.ok(testRest);
     }
 
     @GetMapping("/testString")
@@ -115,8 +120,15 @@ public class IndexController {
 
     @Data
     public static class TestTime {
-        private LocalDateTime localDateTime;
+        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        private Date localDateTime;
         private Gender gender;
+    }
+
+    @Data
+    public static class TestRest {
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        private Date localDateTime;
     }
 
 }

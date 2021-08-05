@@ -11,9 +11,9 @@ import java.util.Objects;
 public class ApiErrorViewModel {
     private String message;
     private int status;
-    private List<Object> errors;
+    private List<?> errors;
 
-    ApiErrorViewModel(int status, String message, List<Object> errors) {
+    ApiErrorViewModel(int status, String message, List<?> errors) {
         this.message = message;
         this.errors = errors;
         this.status = status;
@@ -31,7 +31,7 @@ public class ApiErrorViewModel {
         this.message = message;
     }
 
-    public List<Object> getErrors() {
+    public List<?> getErrors() {
         return this.errors;
     }
 
@@ -80,7 +80,7 @@ public class ApiErrorViewModel {
     public static class ApiErrorViewModelBuilder {
         private int status;
         private String message;
-        private List<Object> errors;
+        private List<?> errors;
 
         ApiErrorViewModelBuilder() {
         }
@@ -90,7 +90,7 @@ public class ApiErrorViewModel {
             return this;
         }
 
-        public ApiErrorViewModel.ApiErrorViewModelBuilder errors(List<Object> errors) {
+        public ApiErrorViewModel.ApiErrorViewModelBuilder errors(List<?> errors) {
             this.errors = errors;
             return this;
         }
