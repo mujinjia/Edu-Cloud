@@ -11,7 +11,6 @@ import com.jlee.config.MyJacksonProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.time.LocalDate;
@@ -20,13 +19,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Jackson 序列化和反序列化时日期格式配置
+ * Jackson2ObjectMapper 中 Jackson 序列化和反序列化时日期格式配置
  *
  * @author jlee
  */
-@Configuration
 @ConditionalOnClass(ObjectMapper.class)
-public class JacksonConfig {
+public class JacksonDateFormatConfigure {
 
     @Bean
     @ConditionalOnClass(Jackson2ObjectMapperBuilder.class)

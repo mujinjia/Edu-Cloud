@@ -1,6 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.jlee.result.CommonResultStatus,\
   com.jlee.configurer.OldWebMvcConfiguration,\
-  com.jlee.configurer.GlobalExceptionHandler,\
-  com.jlee.configurer.JacksonConfig
+  com.jlee.configurer.GlobalExceptionHandler
 

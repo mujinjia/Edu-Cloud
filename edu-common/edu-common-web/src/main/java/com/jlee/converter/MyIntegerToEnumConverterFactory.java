@@ -1,22 +1,19 @@
-package com.jlee.demo.configurer;
+package com.jlee.converter;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.reflect.MethodUtils;
+import com.jlee.utils.EnumUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-@SuppressWarnings("all")
-final class MyIntegerToEnumConverterFactory implements ConverterFactory<Integer, Enum<?>> {
+/**
+ * @author jlee
+ */
+@SuppressWarnings({"unchecked"})
+public final class MyIntegerToEnumConverterFactory implements ConverterFactory<Integer, Enum<?>> {
 
     private final ConcurrentMap<Class<? extends Enum<?>>, EnumMvcConverterHolder> holderMapper = new ConcurrentHashMap<>();
 
@@ -28,19 +25,16 @@ final class MyIntegerToEnumConverterFactory implements ConverterFactory<Integer,
     }
 
 
-    @AllArgsConstructor
     public static class EnumMvcConverterHolder {
         @Nullable
         final EnumMvcConverter<?> converter;
 
-        static EnumMvcConverterHolder createHolder(Class<?> targetType) {
-            List<Method> methodList = MethodUtils.getMethodsListWithAnnotation(targetType, JsonCreator.class, false, true);
-            if (CollectionUtils.isEmpty(methodList)) {
-                return new EnumMvcConverterHolder(new EnumMvcConverter<>(targetType, null));
-            }
-            Assert.isTrue(methodList.size() == 1, "@JsonValue 只能标记在一个工厂方法(静态方法)上");
-            Method method = methodList.get(0);
-            Assert.isTrue(Modifier.isStatic(method.getModifiers()), "@JsonValue 只能标记在工厂方法(静态方法)上");
+        public EnumMvcConverterHolder(@Nullable EnumMvcConverter<?> converter) {
+            this.converter = converter;
+        }
+
+        static <T extends Enum<?>> EnumMvcConverterHolder createHolder(Class<T> targetType) {
+            Method method = EnumUtils.getJsonCreatorMethod(targetType);
             return new EnumMvcConverterHolder(new EnumMvcConverter<>(targetType, method));
         }
 
