@@ -8,19 +8,19 @@ import java.util.Objects;
  *
  * @author jlee
  */
-public class ApiErrorViewModel {
+public class ErrorViewModel {
     private String message;
     private int status;
     private List<?> errors;
 
-    ApiErrorViewModel(int status, String message, List<?> errors) {
+    ErrorViewModel(int status, String message, List<?> errors) {
         this.message = message;
         this.errors = errors;
         this.status = status;
     }
 
-    public static ApiErrorViewModel.ApiErrorViewModelBuilder builder() {
-        return new ApiErrorViewModel.ApiErrorViewModelBuilder();
+    public static ErrorViewModel.ApiErrorViewModelBuilder builder() {
+        return new ErrorViewModel.ApiErrorViewModelBuilder();
     }
 
     public String getMessage() {
@@ -55,7 +55,7 @@ public class ApiErrorViewModel {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ApiErrorViewModel that = (ApiErrorViewModel) o;
+        ErrorViewModel that = (ErrorViewModel) o;
         return status == that.status && Objects.equals(message, that.message) && Objects.equals(errors, that.errors);
     }
 
@@ -65,7 +65,7 @@ public class ApiErrorViewModel {
     }
 
     protected boolean canEqual(Object other) {
-        return other instanceof ApiErrorViewModel;
+        return other instanceof ErrorViewModel;
     }
 
     @Override
@@ -85,23 +85,23 @@ public class ApiErrorViewModel {
         ApiErrorViewModelBuilder() {
         }
 
-        public ApiErrorViewModel.ApiErrorViewModelBuilder message(String message) {
+        public ErrorViewModel.ApiErrorViewModelBuilder message(String message) {
             this.message = message;
             return this;
         }
 
-        public ApiErrorViewModel.ApiErrorViewModelBuilder errors(List<?> errors) {
+        public ErrorViewModel.ApiErrorViewModelBuilder errors(List<?> errors) {
             this.errors = errors;
             return this;
         }
 
-        public ApiErrorViewModel.ApiErrorViewModelBuilder status(int status) {
+        public ErrorViewModel.ApiErrorViewModelBuilder status(int status) {
             this.status = status;
             return this;
         }
 
-        public ApiErrorViewModel build() {
-            return new ApiErrorViewModel(this.status, this.message, this.errors);
+        public ErrorViewModel build() {
+            return new ErrorViewModel(this.status, this.message, this.errors);
         }
 
         @Override

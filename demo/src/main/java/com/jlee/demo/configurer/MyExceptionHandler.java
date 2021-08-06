@@ -1,13 +1,12 @@
 package com.jlee.demo.configurer;
 
 import com.jlee.configurer.GlobalExceptionHandler;
-import com.jlee.exception.ApiErrorViewModel;
 import com.jlee.exception.ApiException;
+import com.jlee.exception.ErrorViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 2021/7/19
  */
 
-@RestControllerAdvice
+//@RestControllerAdvice
 public class MyExceptionHandler extends GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
@@ -26,8 +25,8 @@ public class MyExceptionHandler extends GlobalExceptionHandler {
      */
     @Override
     @ExceptionHandler({ApiException.class})
-    public ApiErrorViewModel handleApiException(ApiException apiException, HttpServletRequest request) {
-        final ApiErrorViewModel errorViewModel = createErrorViewModel(apiException.getStatus(), apiException.getMessage());
+    public ErrorViewModel handleApiException(ApiException apiException, HttpServletRequest request) {
+        final ErrorViewModel errorViewModel = createErrorViewModel(apiException.getStatus(), apiException.getMessage());
         doLogOut(apiException, errorViewModel, request);
         return errorViewModel;
     }
@@ -42,7 +41,7 @@ public class MyExceptionHandler extends GlobalExceptionHandler {
      * @param request        请求信息
      */
     @Override
-    public void doLogOut(@NonNull Exception e, ApiErrorViewModel errorViewModel, HttpServletRequest request) {
+    public void doLogOut(@NonNull Exception e, ErrorViewModel errorViewModel, HttpServletRequest request) {
         String message = e.getMessage();
         if (errorViewModel != null) {
             message = errorViewModel.toString();

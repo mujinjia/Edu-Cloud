@@ -1,7 +1,7 @@
 package com.jlee.configurer;
 
 import com.jlee.config.ResponseResultProperties;
-import com.jlee.exception.ApiErrorViewModel;
+import com.jlee.exception.ErrorViewModel;
 import com.jlee.result.ResponseResult;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
@@ -74,9 +74,9 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
 
         ResponseResult<?> responseResult;
 
-        if (returnValue instanceof ApiErrorViewModel) {
-            Assert.isInstanceOf(ApiErrorViewModel.class, returnValue);
-            ApiErrorViewModel errorViewModel = (ApiErrorViewModel) returnValue;
+        if (returnValue instanceof ErrorViewModel) {
+            Assert.isInstanceOf(ErrorViewModel.class, returnValue);
+            ErrorViewModel errorViewModel = (ErrorViewModel) returnValue;
             responseResult = ResponseResult.of(errorViewModel.getStatus(), errorViewModel.getMessage(), null);
         } else if (returnValue instanceof ResponseResult) {
             Assert.isInstanceOf(ResponseResult.class, returnValue);

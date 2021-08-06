@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -26,7 +28,7 @@ public class IndexController {
 
 
     @PostMapping("/index")
-    public ResponseResult<TestRest> index(@RequestBody TestTime testTime) {
+    public ResponseResult<TestRest> index(@Valid @RequestBody TestTime testTime) {
         final TestRest testRest = new TestRest();
         testRest.setLocalDateTime(new Date());
         return ResponseResult.ok(testRest);
@@ -122,6 +124,7 @@ public class IndexController {
     public static class TestTime {
         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private Date localDateTime;
+        @NotNull
         private Gender gender;
     }
 
