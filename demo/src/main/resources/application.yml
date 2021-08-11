@@ -19,6 +19,8 @@ spring:
     user:
       name: admin
       password: admin
+result:
+  result-field-name: "Result"
 
 mybatis-plus:
   global-config:

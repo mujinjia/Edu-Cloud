@@ -1,19 +1,21 @@
 package com.jlee.result;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.jlee.config.ResponseResultProperties;
+import com.jlee.utils.ResponseResultPropertiesUtils;
 import com.sun.istack.internal.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 /**
@@ -30,12 +32,7 @@ public class ResponseResult<T> {
     private final int code;
     private final T result;
     private final Object status;
-    /**
-     * headers仅做反序列化操作
-     */
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private HttpHeaders headers;
-
 
     public ResponseResult(ResultStatus status) {
         this(status, null);
@@ -44,6 +41,7 @@ public class ResponseResult<T> {
     public ResponseResult(ResultStatus status, @Nullable HttpHeaders headers) {
         this(null, status, headers);
     }
+
 
     public ResponseResult(HttpStatus status) {
         this(status, null);
@@ -78,7 +76,6 @@ public class ResponseResult<T> {
         this.status = status;
         this.headers = headers;
     }
-
 
     public ResponseResult(int status, String message, @Nullable T result, @Nullable HttpHeaders headers) {
         this.code = status;
@@ -167,7 +164,6 @@ public class ResponseResult<T> {
         }
     }
 
-
     public static <T> ResponseResult<T> of(int status, String message, T data) {
         return new ResponseResult<>(status, message, data, null);
     }
@@ -203,7 +199,6 @@ public class ResponseResult<T> {
         return new ResponseResult<>(data, HttpStatus.OK, headers);
     }
 
-
     /**
      * 获取notFound状态的DataBuilder
      *
@@ -211,6 +206,55 @@ public class ResponseResult<T> {
      */
     public static DataBuilder notFound() {
         return status(CommonResultStatus.notFound());
+    }
+
+    /**
+     * jackson 反序列化时使用的，使字段名可以使用配置文件
+     *
+     * @param map 要进行反序列化时的参数
+     * @return ResponseResult
+     */
+    @JsonCreator
+    public static ResponseResult<?> setJson(HashMap<String, Object> map) {
+        if (!CollectionUtils.isEmpty(map)) {
+            ResponseResultProperties responseResultProperties = ResponseResultPropertiesUtils.getResponseResultProperties();
+            if (!map.containsKey(responseResultProperties.getStatusFieldName())) {
+                throw new IllegalArgumentException(responseResultProperties.getStatusFieldName() + "不存在，ResponseResult序列化失败 ");
+            }
+            int code = Integer.parseInt(String.valueOf(map.get(responseResultProperties.getStatusFieldName())));
+            String message = String.valueOf(map.getOrDefault(responseResultProperties.getMessageFieldName(), ""));
+
+            Object data = map.get(responseResultProperties.getResultFieldName());
+
+            return ResponseResult.of(code, message, data);
+        }
+        throw new IllegalArgumentException("ResponseResult序列化失败 ");
+    }
+
+
+    /**
+     * jackson 序列化时使用，让序列化时的字段名可使用配置文件
+     *
+     * @return map对象，后续转字符串交给 jackson
+     */
+    @JsonValue
+    public Map<String, Object> getJsonString() {
+        ResponseResultProperties responseResultProperties = ResponseResultPropertiesUtils.getResponseResultProperties();
+        HashMap<String, Object> map = new HashMap<>(3);
+
+        map.put(responseResultProperties.getStatusFieldName(), this.code);
+        map.put(responseResultProperties.getMessageFieldName(), this.message);
+        map.put(responseResultProperties.getResultFieldName(), this.result);
+        return map;
+    }
+
+    @Override
+    public String toString() {
+        return "ResponseResult{" +
+                "message='" + message + '\'' +
+                ", code=" + code +
+                ", result=" + result +
+                '}';
     }
 
     public String getMessage() {

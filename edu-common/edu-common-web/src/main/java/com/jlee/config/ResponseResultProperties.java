@@ -28,6 +28,18 @@ public class ResponseResultProperties {
      * 资源时状态的默认提示信息
      */
     private static final String DEFAULT_NOT_FOUND_MESSAGE = "未找到";
+    /**
+     * 结果集字段名
+     */
+    private static final String DEFAULT_RESULT_FIELD_NAME = "result";
+    /**
+     * 状态值字段名
+     */
+    private static final String DEFAULT_STATUS_FIELD_NAME = "code";
+    /**
+     * 消息值字段名
+     */
+    private static final String DEFAULT_MESSAGE_FIELD_NAME = "message";
 
 
     //========================
@@ -48,6 +60,18 @@ public class ResponseResultProperties {
      * 统一结果集ResultStatus找不到资源时状态的提示信息
      */
     private String notFoundMessage;
+    /**
+     * 结果集字段名
+     */
+    private String resultFieldName;
+    /**
+     * 状态值字段名
+     */
+    private String statusFieldName;
+    /**
+     * 消息值字段名
+     */
+    private String messageFieldName;
 
     /**
      * 启用Http状态，即将设置的状态code放到Http响应头中
@@ -61,6 +85,17 @@ public class ResponseResultProperties {
      */
     private String messageHeadTitle;
 
+    public String getResultFieldName() {
+        if (!StringUtils.hasText(resultFieldName)) {
+            resultFieldName = DEFAULT_RESULT_FIELD_NAME;
+        }
+        return resultFieldName;
+    }
+
+    public void setResultFieldName(String resultFieldName) {
+        this.resultFieldName = resultFieldName;
+    }
+
     public int getSuccessCode() {
         if (successCode == 0) {
             successCode = DEFAULT_SUCCESS_CODE;
@@ -70,6 +105,28 @@ public class ResponseResultProperties {
 
     public void setSuccessCode(int successCode) {
         this.successCode = successCode;
+    }
+
+    public String getStatusFieldName() {
+        if (!StringUtils.hasText(statusFieldName)) {
+            statusFieldName = DEFAULT_STATUS_FIELD_NAME;
+        }
+        return statusFieldName;
+    }
+
+    public void setStatusFieldName(String statusFieldName) {
+        this.statusFieldName = statusFieldName;
+    }
+
+    public String getMessageFieldName() {
+        if (!StringUtils.hasText(messageFieldName)) {
+            messageFieldName = DEFAULT_MESSAGE_FIELD_NAME;
+        }
+        return messageFieldName;
+    }
+
+    public void setMessageFieldName(String messageFieldName) {
+        this.messageFieldName = messageFieldName;
     }
 
     public String getSuccessMessage() {

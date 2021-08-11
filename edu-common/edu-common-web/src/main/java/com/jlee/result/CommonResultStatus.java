@@ -1,22 +1,17 @@
 package com.jlee.result;
 
 import com.jlee.config.ResponseResultProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import com.jlee.utils.ResponseResultPropertiesUtils;
 
 /**
  * 公共的状态值，可以通过 ResponseResultProperties 读取配置的状态值
  *
  * @author jlee
  */
-@EnableConfigurationProperties(ResponseResultProperties.class)
 class CommonResultStatus implements ResultStatus {
 
     private static volatile CommonResultStatus OK;
     private static volatile CommonResultStatus NOT_FOUND;
-
-
-    private static ResponseResultProperties responseResultProperties;
 
     private final String message;
     private final int code;
@@ -38,6 +33,7 @@ class CommonResultStatus implements ResultStatus {
         if (OK == null) {
             synchronized (CommonResultStatus.class) {
                 if (OK == null) {
+                    ResponseResultProperties responseResultProperties = ResponseResultPropertiesUtils.getResponseResultProperties();
                     OK = new CommonResultStatus(responseResultProperties.getSuccessCode(), responseResultProperties.getSuccessMessage(), "OK");
                 }
             }
@@ -49,16 +45,12 @@ class CommonResultStatus implements ResultStatus {
         if (NOT_FOUND == null) {
             synchronized (CommonResultStatus.class) {
                 if (NOT_FOUND == null) {
+                    ResponseResultProperties responseResultProperties = ResponseResultPropertiesUtils.getResponseResultProperties();
                     NOT_FOUND = new CommonResultStatus(responseResultProperties.getNotFoundCode(), responseResultProperties.getNotFoundMessage(), "NOT_FOUND");
                 }
             }
         }
         return NOT_FOUND;
-    }
-
-    @Autowired
-    public void setResponseResultProperties(ResponseResultProperties[] responseResultProperties) {
-        CommonResultStatus.responseResultProperties = responseResultProperties[0];
     }
 
     @Override
