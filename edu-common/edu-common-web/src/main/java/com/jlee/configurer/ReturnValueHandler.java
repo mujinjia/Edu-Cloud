@@ -107,7 +107,7 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
                 headers.put(messageHeadTitle, Collections.singletonList(URLEncoder.encode(responseResult.getMessage(), "utf-8")));
                 // message 内容 写入到响应头中
                 // body 中只包含Data内容
-                responseEntity = new ResponseEntity<>(responseResult.getData(), headers, responseResult.getCode());
+                responseEntity = new ResponseEntity<>(responseResult.getResult(), headers, responseResult.getCode());
             } else {
                 // 将状态code设置到Http响应头中
                 // body 中同样 包含状态和提示信息
@@ -132,7 +132,7 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
                 responseEntity = new ResponseEntity<>(responseResult, headers, HttpStatus.OK);
             } else {
                 // 如果响应头中被设置成非json的数据那么，就返回data
-                responseEntity = new ResponseEntity<>(responseResult.getData(), headers, HttpStatus.OK);
+                responseEntity = new ResponseEntity<>(responseResult.getResult(), headers, HttpStatus.OK);
             }
         }
 

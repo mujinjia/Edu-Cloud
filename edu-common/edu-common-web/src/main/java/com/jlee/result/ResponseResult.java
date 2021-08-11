@@ -28,9 +28,12 @@ public class ResponseResult<T> {
 
     private final String message;
     private final int code;
-    private final T data;
+    private final T result;
     private final Object status;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //仅做反序列化操作
+    /**
+     * headers仅做反序列化操作
+     */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private HttpHeaders headers;
 
 
@@ -50,37 +53,37 @@ public class ResponseResult<T> {
         this(null, status, headers);
     }
 
-    public ResponseResult(@Nullable T data, ResultStatus status) {
-        this(data, status, null);
+    public ResponseResult(@Nullable T result, ResultStatus status) {
+        this(result, status, null);
     }
 
-    public ResponseResult(@Nullable T data, ResultStatus status, @Nullable HttpHeaders headers) {
+    public ResponseResult(@Nullable T result, ResultStatus status, @Nullable HttpHeaders headers) {
         Assert.notNull(status, "Status不能为null");
         this.code = status.getCode();
         this.message = status.getMessage();
-        this.data = data;
+        this.result = result;
         this.status = status;
         this.headers = headers;
     }
 
-    public ResponseResult(@Nullable T data, HttpStatus status) {
-        this(data, status, null);
+    public ResponseResult(@Nullable T result, HttpStatus status) {
+        this(result, status, null);
     }
 
-    public ResponseResult(@Nullable T data, HttpStatus status, @Nullable HttpHeaders headers) {
+    public ResponseResult(@Nullable T result, HttpStatus status, @Nullable HttpHeaders headers) {
         Assert.notNull(status, "Status不能为null");
         this.code = status.value();
         this.message = status.getReasonPhrase();
-        this.data = data;
+        this.result = result;
         this.status = status;
         this.headers = headers;
     }
 
 
-    public ResponseResult(int status, String message, @Nullable T data, @Nullable HttpHeaders headers) {
+    public ResponseResult(int status, String message, @Nullable T result, @Nullable HttpHeaders headers) {
         this.code = status;
         this.message = message;
-        this.data = data;
+        this.result = result;
         this.status = status;
         this.headers = headers;
     }
@@ -169,7 +172,6 @@ public class ResponseResult<T> {
         return new ResponseResult<>(status, message, data, null);
     }
 
-
     /**
      * 返回一个文件下载响应
      *
@@ -219,8 +221,8 @@ public class ResponseResult<T> {
         return code;
     }
 
-    public T getData() {
-        return data;
+    public T getResult() {
+        return result;
     }
 
     /**
@@ -280,12 +282,12 @@ public class ResponseResult<T> {
             return false;
         }
         ResponseResult<?> that = (ResponseResult<?>) o;
-        return code == that.code && Objects.equals(message, that.message) && Objects.equals(data, that.data) && Objects.equals(status, that.status) && Objects.equals(headers, that.headers);
+        return code == that.code && Objects.equals(message, that.message) && Objects.equals(result, that.result) && Objects.equals(status, that.status) && Objects.equals(headers, that.headers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(message, code, data, status, headers);
+        return Objects.hash(message, code, result, status, headers);
     }
 
     public interface DataBuilder {
