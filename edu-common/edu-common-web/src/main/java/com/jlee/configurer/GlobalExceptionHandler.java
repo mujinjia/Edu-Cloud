@@ -166,7 +166,7 @@ public class GlobalExceptionHandler {
         String fieldName = "body";
         final List<JsonMappingException.Reference> path = jsonMappingException.getPath();
         if (!CollectionUtils.isEmpty(path)) {
-            // 取最后一条（一半也只有一条）
+            // 取最后一条（一般也只有一条）
             final JsonMappingException.Reference reference = path.get(path.size() - 1);
             fieldName = reference.getFieldName();
         }
