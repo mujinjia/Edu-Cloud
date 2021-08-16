@@ -1,4 +1,4 @@
-package com.jlee.demo.constant;
+package com.jlee.constant;
 
 import com.jlee.result.ResultStatus;
 import org.springframework.http.HttpStatus;
@@ -10,14 +10,18 @@ import org.springframework.http.HttpStatus;
 public enum DemoResultStatus implements ResultStatus {
 
     /**
-     * 密码和确认密码不一致
+     * 测试失败状态
      */
-    USER_REG_USER_PASSWORD_CONFIRM(801, "密码和确认密码不一致", HttpStatus.BAD_REQUEST);
+    TEST_FAILURE_STATUS(901, "测试失败状态");
 
 
     private final String message;
     private final int code;
     private final HttpStatus httpStatus;
+
+    DemoResultStatus(Integer code, String message) {
+        this(code, message, HttpStatus.BAD_REQUEST);
+    }
 
     DemoResultStatus(Integer code, String message, HttpStatus httpStatus) {
         this.message = message;

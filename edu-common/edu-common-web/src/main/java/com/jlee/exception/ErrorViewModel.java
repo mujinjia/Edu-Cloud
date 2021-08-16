@@ -1,5 +1,7 @@
 package com.jlee.exception;
 
+import org.springframework.http.HttpStatus;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -9,14 +11,15 @@ import java.util.Objects;
  * @author jlee
  */
 public class ErrorViewModel {
+    private HttpStatus status;
     private String message;
-    private int status;
+    private int code;
     private List<?> errors;
 
-    ErrorViewModel(int status, String message, List<?> errors) {
+    ErrorViewModel(int code, String message, List<?> errors) {
         this.message = message;
         this.errors = errors;
-        this.status = status;
+        this.code = code;
     }
 
     public static ErrorViewModel.ApiErrorViewModelBuilder builder() {
@@ -39,12 +42,12 @@ public class ErrorViewModel {
         this.errors = errors;
     }
 
-    public int getStatus() {
-        return status;
+    public int getCode() {
+        return code;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     @Override
@@ -56,12 +59,12 @@ public class ErrorViewModel {
             return false;
         }
         ErrorViewModel that = (ErrorViewModel) o;
-        return status == that.status && Objects.equals(message, that.message) && Objects.equals(errors, that.errors);
+        return code == that.code && Objects.equals(message, that.message) && Objects.equals(errors, that.errors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(message, status, errors);
+        return Objects.hash(message, code, errors);
     }
 
     protected boolean canEqual(Object other) {
@@ -72,7 +75,7 @@ public class ErrorViewModel {
     public String toString() {
         return "ApiErrorViewModel(" +
                 "message='" + message + '\'' +
-                ", status=" + status +
+                ", status=" + code +
                 ", errors=" + errors +
                 ')';
     }

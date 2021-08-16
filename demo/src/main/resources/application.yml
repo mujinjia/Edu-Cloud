@@ -1,6 +1,12 @@
 server:
   port: 8080
 spring:
+  application:
+    name: service-consumer
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
   jackson:
     default-property-inclusion: NON_EMPTY
     date-format: yyyy-MM-dd HH:mm:ss   # 只对Date类型有效果，因为该配置是用来创建 SimpleDateFormat 的

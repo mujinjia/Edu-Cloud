@@ -78,7 +78,7 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
         if (returnValue instanceof ErrorViewModel) {
             Assert.isInstanceOf(ErrorViewModel.class, returnValue);
             ErrorViewModel errorViewModel = (ErrorViewModel) returnValue;
-            responseResult = ResponseResult.of(errorViewModel.getStatus(), errorViewModel.getMessage(), null);
+            responseResult = ResponseResult.of(errorViewModel.getCode(), errorViewModel.getMessage(), null);
         } else if (returnValue instanceof ResponseResult) {
             Assert.isInstanceOf(ResponseResult.class, returnValue);
             responseResult = (ResponseResult<?>) returnValue;
@@ -101,18 +101,23 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
 
         // 最后封装成ResponseEntity
         if (this.responseResultProperties.isEnabledHttpStatus()) {
-
+            HttpStatus httpStatus = responseResult.getHttpStatus();
+            if (httpStatus == null) {
+                httpStatus = HttpStatus.OK;
+            }
             final String messageHeadTitle = responseResultProperties.getMessageHeadTitle();
             if (StringUtils.hasText(messageHeadTitle)) {
+                // message 内容 写入到响应头中
                 // 提示信息进行URL编码，避免中文乱码
                 headers.put(messageHeadTitle, Collections.singletonList(URLEncoder.encode(responseResult.getMessage(), "utf-8")));
-                // message 内容 写入到响应头中
+                // 业务状态码写入响应头
+
                 // body 中只包含Data内容
-                responseEntity = new ResponseEntity<>(responseResult.getResult(), headers, responseResult.getCode());
+                responseEntity = new ResponseEntity<>(responseResult.getResult(), headers, httpStatus);
             } else {
                 // 将状态code设置到Http响应头中
                 // body 中同样 包含状态和提示信息
-                responseEntity = new ResponseEntity<>(responseResult, headers, responseResult.getCode());
+                responseEntity = new ResponseEntity<>(responseResult, headers, httpStatus);
             }
 
         } else {

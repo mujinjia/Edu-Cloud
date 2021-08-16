@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: service-provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  jackson:
+    default-property-inclusion: NON_EMPTY
+    date-format: yyyy-MM-dd HH:mm:ss   # 只对Date类型有效果，因为该配置是用来创建 SimpleDateFormat 的
+  mvc:
+    # 非json请求反序化日期时的格式
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+      date: yyyy-MM-dd
+      time: HH:mm:ss
+  security:
+    user:
+      name: admin
+      password: admin
+result:
+  result-field-name: "Result"
+  enabled-http-status: true
+

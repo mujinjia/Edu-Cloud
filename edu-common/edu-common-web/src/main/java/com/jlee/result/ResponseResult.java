@@ -249,6 +249,7 @@ public class ResponseResult<T> implements Serializable {
         return map;
     }
 
+
     @Override
     public String toString() {
         return "ResponseResult{" +
@@ -307,6 +308,22 @@ public class ResponseResult<T> implements Serializable {
             }
             throw new IllegalArgumentException(
                     String.format("在 %s 中没有枚举常量可以匹配 %s", enumType.getTypeName(), this.status));
+        }
+    }
+
+    /**
+     * 获取 HttpStatus 状态
+     *
+     * @return HttpStatus
+     */
+    public HttpStatus getHttpStatus() {
+        if (this.status instanceof ResultStatus) {
+            return ((ResultStatus) this.status).getHttpStatus();
+        } else if (this.status instanceof HttpStatus) {
+            return (HttpStatus) this.status;
+        } else {
+            // status 保存的时int值
+            return HttpStatus.valueOf((int) this.status);
         }
     }
 

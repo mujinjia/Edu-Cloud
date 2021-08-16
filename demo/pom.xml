@@ -15,6 +15,24 @@
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
+        <!-- spring-cloud-alibaba  nacos 注册和发现服务-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- spring-cloud  nacos feign客户端-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+
+        <!-- spring-cloud-loadbalancer 负载均衡-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-loadbalancer</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -125,6 +125,7 @@
     <modules>
         <module>edu-common</module>
         <module>demo</module>
+        <module>server-demo</module>
     </modules>
     <dependencies>
     </dependencies>

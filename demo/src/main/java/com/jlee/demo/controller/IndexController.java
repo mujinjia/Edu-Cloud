@@ -5,12 +5,16 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.jlee.demo.constant.DemoResultStatus;
+import com.jlee.demo.service.ServerDemoApi;
 import com.jlee.exception.ApiException;
 import com.jlee.result.ResponseResult;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -22,13 +26,24 @@ import java.time.LocalDateTime;
 @RestController
 public class IndexController {
 
+    private final ServerDemoApi serverDemoApi;
 
-    @ResponseBody
+    public IndexController(ServerDemoApi serverDemoApi) {
+        this.serverDemoApi = serverDemoApi;
+    }
+
     @PostMapping("/index")
     public ResponseResult<TestRest> index(@RequestBody TestTime testTime) {
         final TestRest testRest = new TestRest();
         testRest.setLocalDateTime(LocalDateTime.now());
         return ResponseResult.ok(testRest);
+    }
+
+    @PostMapping("/feignTest")
+    public String feignTest() {
+        final ResponseResult<String> exception = this.serverDemoApi.exception();
+        final String result = exception.getResult();
+        return "成功  " + result;
     }
 
     @GetMapping("/testString")

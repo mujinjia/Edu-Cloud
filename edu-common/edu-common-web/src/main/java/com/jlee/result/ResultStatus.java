@@ -1,5 +1,7 @@
 package com.jlee.result;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * 结果集状态接口，各业务自定义状态枚举类实现这个接口
  *
@@ -16,7 +18,14 @@ public interface ResultStatus {
     String getMessage();
 
     /**
-     * 获取结果集状态码
+     * 获取 HttpStatus 状态
+     *
+     * @return HttpStatus
+     */
+    HttpStatus getHttpStatus();
+
+    /**
+     * 获取业务结果集状态码
      *
      * @return 状态码
      */
