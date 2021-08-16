@@ -1,36 +1,33 @@
 package com.jlee.demo.controller;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.jlee.demo.constant.DemoResultStatus;
 import com.jlee.exception.ApiException;
 import com.jlee.result.ResponseResult;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author jlee
  * @since 2021/7/15
  */
-@RestController("test")
+@RestController
 public class IndexController {
 
 
+    @ResponseBody
     @PostMapping("/index")
-    public ResponseResult<TestRest> index(@Valid @RequestBody TestTime testTime) {
+    public ResponseResult<TestRest> index(@RequestBody TestTime testTime) {
         final TestRest testRest = new TestRest();
-        testRest.setLocalDateTime(new Date());
+        testRest.setLocalDateTime(LocalDateTime.now());
         return ResponseResult.ok(testRest);
     }
 
@@ -83,6 +80,7 @@ public class IndexController {
 
         private final Integer code;
         @JsonValue
+
         private final String description;
 
         Gender(Integer code, String description) {
@@ -91,6 +89,7 @@ public class IndexController {
         }
 
         @JsonCreator
+        @JSONCreator
         public static Gender create(String value) {
             try {
                 return Gender.valueOf(value);
@@ -115,6 +114,7 @@ public class IndexController {
             return code;
         }
 
+        @JSONField
         public String getDescription() {
             return description;
         }
@@ -122,16 +122,19 @@ public class IndexController {
 
     @Data
     public static class TestTime {
-        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        private Date localDateTime;
+        //        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        @JSONField(format = "yyyy+MM+dd HH:mm:ss")
+        private LocalDateTime localDateTime;
         @NotNull
         private Gender gender;
     }
 
     @Data
     public static class TestRest {
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        private Date localDateTime;
+        //        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        @JSONField(format = "yyyy/MM/dd HH:mm:ss")
+        private LocalDateTime localDateTime;
+        private Gender gender = Gender.FEMALE;
     }
 
 }
