@@ -12,6 +12,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +27,7 @@ import java.util.*;
  *
  * @author jlee
  */
-public class ResponseResult<T> {
+public class ResponseResult<T> implements Serializable {
 
     private final String message;
     private final int code;

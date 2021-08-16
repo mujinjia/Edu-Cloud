@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -67,8 +68,8 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
     }
 
     @Override
-    public void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType,
-                                  ModelAndViewContainer mavContainer, NativeWebRequest webRequest)
+    public void handleReturnValue(@Nullable Object returnValue, @NonNull MethodParameter returnType,
+                                  @NonNull ModelAndViewContainer mavContainer, @NonNull NativeWebRequest webRequest)
             throws Exception {
 
 
