@@ -2,6 +2,7 @@ package com.jlee.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
 /**
@@ -40,6 +41,10 @@ public class ResponseResultProperties {
      * 消息值字段名
      */
     private static final String DEFAULT_MESSAGE_FIELD_NAME = "message";
+    /**
+     * message 在 响应头中标题
+     */
+    private static final String DEFAULT_MESSAGE_HEAD_TITLE = "xx-message";
 
 
     //========================
@@ -60,6 +65,12 @@ public class ResponseResultProperties {
      * 统一结果集ResultStatus找不到资源时状态的提示信息
      */
     private String notFoundMessage;
+
+    /**
+     * 默认失败时的 HttpStatus  抛异常时 如果没有设置HttpStatus 取 HttpStatus.BAD_REQUEST enabledHttpStatus字段为true时才起作用
+     */
+    private HttpStatus failHttpStatus;
+
     /**
      * 结果集字段名
      */
@@ -67,7 +78,7 @@ public class ResponseResultProperties {
     /**
      * 状态值字段名
      */
-    private String statusFieldName;
+    private String codeFieldName;
     /**
      * 消息值字段名
      */
@@ -79,9 +90,16 @@ public class ResponseResultProperties {
     private boolean enabledHttpStatus;
 
     /**
-     * message 在 响应头中标题
-     * 如果配置了该字段，会将提示信息放入Http响应同中，此时 响应体中中包含data内容，否则 响应体中会包含status、message、和data内容
+     * 业务状态值 code 在 响应头中标题
+     * 如果配置了该字段，会将提示信息放入Http响应同中，此时 响应体中中包含data内容，否则 响应体中只包含status、message、和data内容
      * enabledHttpStatus字段为true时才起作用
+     */
+    private String codeHeadTitle;
+
+    /**
+     * message 在 响应头中标题
+     * 默认值为 xx-message
+     * enabledHttpStatus字段为true且 codeHeadTitle有值时才起作用
      */
     private String messageHeadTitle;
 
@@ -107,15 +125,26 @@ public class ResponseResultProperties {
         this.successCode = successCode;
     }
 
-    public String getStatusFieldName() {
-        if (!StringUtils.hasText(statusFieldName)) {
-            statusFieldName = DEFAULT_STATUS_FIELD_NAME;
+    public HttpStatus getFailHttpStatus() {
+        if (failHttpStatus == null) {
+            failHttpStatus = HttpStatus.BAD_REQUEST;
         }
-        return statusFieldName;
+        return failHttpStatus;
     }
 
-    public void setStatusFieldName(String statusFieldName) {
-        this.statusFieldName = statusFieldName;
+    public void setFailHttpStatus(HttpStatus failHttpStatus) {
+        this.failHttpStatus = failHttpStatus;
+    }
+
+    public String getCodeFieldName() {
+        if (!StringUtils.hasText(codeFieldName)) {
+            codeFieldName = DEFAULT_STATUS_FIELD_NAME;
+        }
+        return codeFieldName;
+    }
+
+    public void setCodeFieldName(String codeFieldName) {
+        this.codeFieldName = codeFieldName;
     }
 
     public String getMessageFieldName() {
@@ -170,7 +199,18 @@ public class ResponseResultProperties {
         this.enabledHttpStatus = enabledHttpStatus;
     }
 
+    public String getCodeHeadTitle() {
+        return codeHeadTitle;
+    }
+
+    public void setCodeHeadTitle(String codeHeadTitle) {
+        this.codeHeadTitle = codeHeadTitle;
+    }
+
     public String getMessageHeadTitle() {
+        if (!StringUtils.hasText(messageHeadTitle)) {
+            messageHeadTitle = DEFAULT_MESSAGE_HEAD_TITLE;
+        }
         return messageHeadTitle;
     }
 

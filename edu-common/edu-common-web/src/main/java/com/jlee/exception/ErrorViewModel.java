@@ -16,10 +16,11 @@ public class ErrorViewModel {
     private int code;
     private List<?> errors;
 
-    ErrorViewModel(int code, String message, List<?> errors) {
+    ErrorViewModel(int code, String message, List<?> errors, HttpStatus status) {
         this.message = message;
         this.errors = errors;
         this.code = code;
+        this.status = status;
     }
 
     public static ErrorViewModel.ApiErrorViewModelBuilder builder() {
@@ -38,7 +39,7 @@ public class ErrorViewModel {
         return this.errors;
     }
 
-    public void setErrors(List<Object> errors) {
+    public void setErrors(List<?> errors) {
         this.errors = errors;
     }
 
@@ -50,6 +51,14 @@ public class ErrorViewModel {
         this.code = code;
     }
 
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(HttpStatus status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -59,12 +68,12 @@ public class ErrorViewModel {
             return false;
         }
         ErrorViewModel that = (ErrorViewModel) o;
-        return code == that.code && Objects.equals(message, that.message) && Objects.equals(errors, that.errors);
+        return code == that.code && status == that.status && Objects.equals(message, that.message) && Objects.equals(errors, that.errors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(message, code, errors);
+        return Objects.hash(status, message, code, errors);
     }
 
     protected boolean canEqual(Object other) {
@@ -81,9 +90,10 @@ public class ErrorViewModel {
     }
 
     public static class ApiErrorViewModelBuilder {
-        private int status;
+        private int code;
         private String message;
         private List<?> errors;
+        private HttpStatus status;
 
         ApiErrorViewModelBuilder() {
         }
@@ -98,13 +108,18 @@ public class ErrorViewModel {
             return this;
         }
 
-        public ErrorViewModel.ApiErrorViewModelBuilder status(int status) {
+        public ErrorViewModel.ApiErrorViewModelBuilder code(int code) {
+            this.code = code;
+            return this;
+        }
+
+        public ErrorViewModel.ApiErrorViewModelBuilder status(HttpStatus status) {
             this.status = status;
             return this;
         }
 
         public ErrorViewModel build() {
-            return new ErrorViewModel(this.status, this.message, this.errors);
+            return new ErrorViewModel(this.code, this.message, this.errors, this.status);
         }
 
         @Override

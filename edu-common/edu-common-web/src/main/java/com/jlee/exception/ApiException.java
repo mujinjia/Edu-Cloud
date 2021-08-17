@@ -1,6 +1,7 @@
 package com.jlee.exception;
 
 import com.jlee.result.ResultStatus;
+import com.jlee.utils.ResponseResultUtils;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -67,13 +68,6 @@ public class ApiException extends RuntimeException {
      * @return HttpStatus
      */
     public HttpStatus getHttpStatus() {
-        if (this.status instanceof ResultStatus) {
-            return ((ResultStatus) this.status).getHttpStatus();
-        } else if (this.status instanceof HttpStatus) {
-            return (HttpStatus) this.status;
-        } else {
-            // status 保存的时int值
-            return HttpStatus.valueOf((int) this.status);
-        }
+        return ResponseResultUtils.toHttpStatus(this.status);
     }
 }

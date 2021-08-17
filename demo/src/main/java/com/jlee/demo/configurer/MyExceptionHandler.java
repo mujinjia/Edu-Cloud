@@ -26,7 +26,7 @@ public class MyExceptionHandler extends GlobalExceptionHandler {
     @Override
     @ExceptionHandler({ApiException.class})
     public ErrorViewModel handleApiException(ApiException apiException, HttpServletRequest request) {
-        final ErrorViewModel errorViewModel = createErrorViewModel(apiException.getCode(), apiException.getMessage());
+        final ErrorViewModel errorViewModel = createErrorViewModel(apiException.getCode(), apiException.getMessage(), apiException.getHttpStatus());
         doLogOut(apiException, errorViewModel, request);
         return errorViewModel;
     }

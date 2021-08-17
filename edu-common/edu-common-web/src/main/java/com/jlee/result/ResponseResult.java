@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.jlee.config.ResponseResultProperties;
 import com.jlee.utils.ResponseResultPropertiesUtils;
-import com.sun.istack.internal.Nullable;
+import com.jlee.utils.ResponseResultUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -56,13 +57,9 @@ public class ResponseResult<T> implements Serializable {
         this(result, status, null);
     }
 
-    public ResponseResult(@Nullable T result, ResultStatus status, @Nullable HttpHeaders headers) {
-        Assert.notNull(status, "Status不能为null");
-        this.code = status.getCode();
-        this.message = status.getMessage();
-        this.result = result;
-        this.status = status;
-        this.headers = headers;
+    public ResponseResult(@Nullable T result, @NonNull ResultStatus status, @Nullable HttpHeaders headers) {
+        this(status.getCode(), status.getMessage(), result, headers, status);
+
     }
 
     public ResponseResult(@Nullable T result, HttpStatus status) {
@@ -70,19 +67,22 @@ public class ResponseResult<T> implements Serializable {
     }
 
     public ResponseResult(@Nullable T result, HttpStatus status, @Nullable HttpHeaders headers) {
-        Assert.notNull(status, "Status不能为null");
-        this.code = status.value();
-        this.message = status.getReasonPhrase();
-        this.result = result;
-        this.status = status;
-        this.headers = headers;
+        this(status.value(), status.getReasonPhrase(), result, headers, status);
     }
 
-    public ResponseResult(int status, String message, @Nullable T result, @Nullable HttpHeaders headers) {
-        this.code = status;
+    public ResponseResult(int code, String message, @Nullable T result, @Nullable HttpHeaders headers) {
+        this(code, message, result, headers, code);
+    }
+
+    public ResponseResult(int code, String message, @Nullable T result, @Nullable HttpHeaders headers, Object status) {
+        this.code = code;
         this.message = message;
         this.result = result;
-        this.status = status;
+        if (status != null) {
+            this.status = status;
+        } else {
+            this.status = code;
+        }
         this.headers = headers;
     }
 
@@ -165,8 +165,12 @@ public class ResponseResult<T> implements Serializable {
         }
     }
 
-    public static <T> ResponseResult<T> of(int status, String message, T data) {
-        return new ResponseResult<>(status, message, data, null);
+    public static <T> ResponseResult<T> of(int code, String message, T data) {
+        return new ResponseResult<>(code, message, data, null);
+    }
+
+    public static <T> ResponseResult<T> of(int code, String message, T data, HttpStatus status) {
+        return new ResponseResult<>(code, message, data, null, status);
     }
 
     /**
@@ -219,10 +223,10 @@ public class ResponseResult<T> implements Serializable {
     public static ResponseResult<?> setJson(HashMap<String, Object> map) {
         if (!CollectionUtils.isEmpty(map)) {
             ResponseResultProperties responseResultProperties = ResponseResultPropertiesUtils.getResponseResultProperties();
-            if (!map.containsKey(responseResultProperties.getStatusFieldName())) {
-                throw new IllegalArgumentException(responseResultProperties.getStatusFieldName() + "不存在，ResponseResult序列化失败 ");
+            if (!map.containsKey(responseResultProperties.getCodeFieldName())) {
+                throw new IllegalArgumentException(responseResultProperties.getCodeFieldName() + "不存在，ResponseResult序列化失败 ");
             }
-            int code = Integer.parseInt(String.valueOf(map.get(responseResultProperties.getStatusFieldName())));
+            int code = Integer.parseInt(String.valueOf(map.get(responseResultProperties.getCodeFieldName())));
             String message = String.valueOf(map.getOrDefault(responseResultProperties.getMessageFieldName(), ""));
 
             Object data = map.get(responseResultProperties.getResultFieldName());
@@ -243,7 +247,7 @@ public class ResponseResult<T> implements Serializable {
         ResponseResultProperties responseResultProperties = ResponseResultPropertiesUtils.getResponseResultProperties();
         HashMap<String, Object> map = new HashMap<>(3);
 
-        map.put(responseResultProperties.getStatusFieldName(), this.code);
+        map.put(responseResultProperties.getCodeFieldName(), this.code);
         map.put(responseResultProperties.getMessageFieldName(), this.message);
         map.put(responseResultProperties.getResultFieldName(), this.result);
         return map;
@@ -317,14 +321,7 @@ public class ResponseResult<T> implements Serializable {
      * @return HttpStatus
      */
     public HttpStatus getHttpStatus() {
-        if (this.status instanceof ResultStatus) {
-            return ((ResultStatus) this.status).getHttpStatus();
-        } else if (this.status instanceof HttpStatus) {
-            return (HttpStatus) this.status;
-        } else {
-            // status 保存的时int值
-            return HttpStatus.valueOf((int) this.status);
-        }
+        return ResponseResultUtils.toHttpStatus(this.status);
     }
 
     public HttpHeaders getHeaders() {

@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ErrorViewModel handleException(Exception e, HttpServletRequest request) {
-        final ErrorViewModel errorViewModel = createErrorViewModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        final ErrorViewModel errorViewModel = createErrorViewModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         doLogOut(e, errorViewModel, request);
         return errorViewModel;
     }
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
             final FieldError fieldError = getJsonReferenceFieldError((JsonMappingException) cause);
             errorViewModel = fieldErrorToErrorViewModel(Collections.singletonList(fieldError));
         } else {
-            errorViewModel = createErrorViewModel(HttpStatus.BAD_REQUEST.value(), "参数解析失败");
+            errorViewModel = createErrorViewModel(HttpStatus.BAD_REQUEST.value(), "参数解析失败", HttpStatus.BAD_REQUEST);
         }
         doLogOut(e, errorViewModel, request);
         return errorViewModel;
@@ -88,7 +88,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({ApiException.class})
     public ErrorViewModel handleApiException(ApiException apiException, HttpServletRequest request) {
-        final ErrorViewModel errorViewModel = createErrorViewModel(apiException.getCode(), apiException.getMessage());
+        final ErrorViewModel errorViewModel = createErrorViewModel(apiException.getCode(), apiException.getMessage(), apiException.getHttpStatus());
         doLogOut(apiException, errorViewModel, request);
         return errorViewModel;
     }
@@ -100,10 +100,11 @@ public class GlobalExceptionHandler {
      * @param message 错误信息
      * @return ApiErrorViewModel
      */
-    public ErrorViewModel createErrorViewModel(int code, String message) {
+    public ErrorViewModel createErrorViewModel(int code, String message, HttpStatus status) {
         return ErrorViewModel.builder()
-                .status(code)
+                .code(code)
                 .message(message)
+                .status(status)
                 .build();
     }
 
@@ -115,11 +116,12 @@ public class GlobalExceptionHandler {
      * @param errors  粗体错误列表
      * @return ApiErrorViewModel
      */
-    public ErrorViewModel createErrorViewModel(int code, String message, List<?> errors) {
+    public ErrorViewModel createErrorViewModel(int code, String message, List<?> errors, HttpStatus status) {
         return ErrorViewModel.builder()
-                .status(code)
+                .code(code)
                 .message(message)
                 .errors(errors)
+                .status(status)
                 .build();
     }
 
@@ -184,7 +186,7 @@ public class GlobalExceptionHandler {
         String message = getFieldErrorMessage(fieldErrors);
         // 把fieldErrors中，需要的部分提出出来进行返回
         List<Map<String, String>> mapList = toValidatorMsg(fieldErrors);
-        return createErrorViewModel(HttpStatus.BAD_REQUEST.value(), message, mapList);
+        return createErrorViewModel(HttpStatus.BAD_REQUEST.value(), message, mapList, HttpStatus.BAD_REQUEST);
     }
 
     /**

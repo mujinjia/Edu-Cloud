@@ -78,7 +78,12 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
         if (returnValue instanceof ErrorViewModel) {
             Assert.isInstanceOf(ErrorViewModel.class, returnValue);
             ErrorViewModel errorViewModel = (ErrorViewModel) returnValue;
-            responseResult = ResponseResult.of(errorViewModel.getCode(), errorViewModel.getMessage(), null);
+            HttpStatus status = errorViewModel.getStatus();
+            if (status == null) {
+                //  异常 返回值 HttpStatus 没指定时取默认值
+                status = responseResultProperties.getFailHttpStatus();
+            }
+            responseResult = ResponseResult.of(errorViewModel.getCode(), errorViewModel.getMessage(), null, status);
         } else if (returnValue instanceof ResponseResult) {
             Assert.isInstanceOf(ResponseResult.class, returnValue);
             responseResult = (ResponseResult<?>) returnValue;
@@ -103,10 +108,16 @@ public class ReturnValueHandler extends HttpEntityMethodProcessor implements Han
         if (this.responseResultProperties.isEnabledHttpStatus()) {
             HttpStatus httpStatus = responseResult.getHttpStatus();
             if (httpStatus == null) {
+                // 取不到 HttpStatus 设置为 200
                 httpStatus = HttpStatus.OK;
             }
-            final String messageHeadTitle = responseResultProperties.getMessageHeadTitle();
-            if (StringUtils.hasText(messageHeadTitle)) {
+            final String codeHeadTitle = responseResultProperties.getCodeHeadTitle();
+            if (StringUtils.hasText(codeHeadTitle)) {
+
+                // 业务code 内容 写入到响应头中
+                headers.put(codeHeadTitle, Collections.singletonList(String.valueOf(responseResult.getCode())));
+
+                final String messageHeadTitle = responseResultProperties.getMessageHeadTitle();
                 // message 内容 写入到响应头中
                 // 提示信息进行URL编码，避免中文乱码
                 headers.put(messageHeadTitle, Collections.singletonList(URLEncoder.encode(responseResult.getMessage(), "utf-8")));

@@ -13,6 +13,8 @@ import java.util.List;
  */
 public class BeanUtils {
 
+    private BeanUtils() {
+    }
 
     /**
      * 获取给定类的所有使用给定注释进行注释的方法。

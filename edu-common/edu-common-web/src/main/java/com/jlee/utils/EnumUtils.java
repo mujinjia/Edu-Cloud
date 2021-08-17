@@ -14,6 +14,10 @@ import java.util.List;
  */
 public class EnumUtils {
 
+    private EnumUtils() {
+
+    }
+
     /**
      * 获取枚举类中 标记了 JsonCreator 注解的一个方法
      *
