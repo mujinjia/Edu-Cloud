@@ -2,6 +2,7 @@ package com.jlee.demo.service;
 
 import com.jlee.result.ResponseResult;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -11,5 +12,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient(name = "service-provider", path = "/server")
 public interface ServerDemoApi {
     @GetMapping("/exception2")
-    ResponseResult<String> exception();
+    ResponseEntity<ResponseResult<String>> exception();
 }

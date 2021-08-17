@@ -41,8 +41,8 @@ public class IndexController {
 
     @PostMapping("/feignTest")
     public String feignTest() {
-        final ResponseResult<String> exception = this.serverDemoApi.exception();
-        final String result = exception.getResult();
+        final ResponseEntity<ResponseResult<String>> exception = this.serverDemoApi.exception();
+        final String result = exception.getBody().getResult();
         return "成功  " + result;
     }
 
